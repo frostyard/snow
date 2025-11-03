@@ -1,6 +1,6 @@
-[submodule "system_files/usr/share/gnome-shell/extensions/hotedge@jonathan.jdoda.ca"]
+[submodule "hotedge@jonathan.jdoda.ca"]
 	path = system_files/usr/share/gnome-shell/extensions/hotedge@jonathan.jdoda.ca
 	url = https://github.com/linuxsnow/hotedge.git
-[submodule "system_files/usr/share/gnome-shell/extensions/logomenu@aryan_k"]
+[submodule "logomenu@aryan_k"]
 	path = system_files/usr/share/gnome-shell/extensions/logomenu@aryan_k
 	url = https://github.com/linuxsnow/Logomenu.git
