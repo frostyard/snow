@@ -45,6 +45,8 @@ jobs:
       # These stage versions are pinned by https://github.com/renovatebot/renovate
       - name: Checkout
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+        with:
+          submodules: recursive
 
       # Free up space on the builders
       #- name: Maximize build space
@@ -100,6 +102,11 @@ jobs:
             containers.bootc=1
           sep-tags: " "
           sep-annotations: " "
+
+      - name: Pull latest brew tap
+        run : |
+          mkdir -p system_files/usr/share
+          ./build_files/ghcurl "$(./build_files/ghcurl https://api.github.com/repos/linuxsnow/homebrew-tap/releases/latest | jq -r '.assets[] | select(.name| test(".*-x86_64.tar.zst$")).browser_download_url')" -Lo system_files/usr/share/homebrew.tar.zst
 
       - name: Build Image
         id: build_image
