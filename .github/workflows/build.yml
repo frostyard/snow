@@ -104,6 +104,8 @@ jobs:
           sep-annotations: " "
 
       - name: Pull latest brew tap
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run : |
           mkdir -p system_files/usr/share
           ./build_files/ghcurl "$(./build_files/ghcurl https://api.github.com/repos/linuxsnow/homebrew-tap/releases/latest | jq -r '.assets[] | select(.name| test(".*-x86_64.tar.zst$")).browser_download_url')" -Lo system_files/usr/share/homebrew.tar.zst
