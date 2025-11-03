@@ -1,5 +1,4 @@
 #!/bin/bash
-
 set -ouex pipefail
 
 # Repository setup
@@ -11,6 +10,13 @@ apt-get update -y
 # Add nonfree firmware
 apt-get install -y \
 	firmware-linux-nonfree
+
+# GNOME Customization
+apt-get install -y \
+	gnome-shell-extension-appindicator \
+	ptyxis
+apt-get remove -y \
+	gnome-terminal
 
 # Switch to IWD
 apt-get install -y \
