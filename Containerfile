@@ -15,5 +15,4 @@ RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
     /ctx/build
     
 # Finalize & Lint
-RUN ln -s /var/usrlocal /usr/local && \
-    bootc container lint
+RUN bootc container lint
