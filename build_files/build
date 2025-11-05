@@ -72,12 +72,21 @@ curl --retry 3 -Lo /etc/flatpak/remotes.d/flathub.flatpakrepo https://dl.flathub
 apt-get install -y \
 	gnome-shell-extension-appindicator
 
+# locales and keyboard
+apt-get install -y \
+    locales \
+    keyboard-configuration
+
+# NetworkManager
+apt-get install -y \
+    network-manager \
+    network-manager-applet
+
 # Switch to IWD
 apt-get install -y \
 	iwd
 apt-get remove -y \
 	wpasupplicant
-
 # Handle new user groups
 echo 'GROUPS=users docker incus-admin' >> /etc/default/useradd
 
