@@ -23,10 +23,15 @@ apt-get update -y
 apt-get install -y \
 	firmware-linux-nonfree
 
+# Ensure dracut is kept
+apt autoremove -y --purge
+apt-get install -y \
+	dracut
+
 # Oxidize
 apt install -y \
-  sudo-rs \
-  rust-coreutils
+	sudo-rs \
+	rust-coreutils
 
 # Distrobox
 apt-get install -y \
@@ -41,24 +46,24 @@ apt-get install -y \
 # Docker
 apt-get install -y \
 	docker-ce \
-    docker-ce-cli \
-    containerd.io \
-    docker-buildx-plugin \
-    docker-compose-plugin
+	docker-ce-cli \
+	containerd.io \
+	docker-buildx-plugin \
+	docker-compose-plugin
 
 # Incus
 apt-get install -y \
-    dnsmasq-base \
-    ovmf \
-    qemu-kvm \
-    qemu-utils \
-    qemu-system-gui \
-    qemu-system-modules-spice \
-    ipxe-qemu \
-    genisoimage \
-    virt-viewer \
-    incus \
-    incus-ui-canonical
+	dnsmasq-base \
+	ovmf \
+	qemu-kvm \
+	qemu-utils \
+	qemu-system-gui \
+	qemu-system-modules-spice \
+	ipxe-qemu \
+	genisoimage \
+	virt-viewer \
+	incus \
+	incus-ui-canonical
 
 mkdir -p /etc/flatpak/remotes.d
 curl --retry 3 -Lo /etc/flatpak/remotes.d/flathub.flatpakrepo https://dl.flathub.org/repo/flathub.flatpakrepo
@@ -75,6 +80,11 @@ apt-get remove -y \
 
 # Handle new user groups
 echo 'GROUPS=users docker incus-admin' >> /etc/default/useradd
+
+# Build Initramfs
+KERNEL_VERSION="$(basename "$(find /usr/lib/modules -maxdepth 1 -type d | grep -v -E "*.img" | tail -n 1)")"
+dracut --force --no-hostonly --reproducible --zstd --verbose \
+	--kver "$KERNEL_VERSION" "/usr/lib/modules/$KERNEL_VERSION/initramfs.img"
 
 # Cleanup
 apt autoremove -y --purge
