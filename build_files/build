@@ -32,6 +32,13 @@ apt-get install -y \
 apt install -y \
 	sudo-rs \
 	rust-coreutils
+mv -f /usr/bin/sudo-rs /usr/bin/sudo
+mv -f /usr/bin/su-rs /usr/bin/su
+
+for src_file in /usr/lib/cargo/bin/coreutils/*; do
+	ln -s "/usr/bin/coreutils" "/usr/bin/$(basename "$src_file")-link"
+	mv -f "/usr/bin/$(basename "$src_file")-link" "/usr/bin/$(basename "$src_file")"
+done
 
 # Distrobox
 apt-get install -y \
