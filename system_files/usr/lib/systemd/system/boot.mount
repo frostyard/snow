@@ -1,0 +1,13 @@
+[Unit]
+DefaultDependencies=no
+Requires=boot.mount
+After=boot.mount
+Before=local-fs.target sysinit.target
+
+[Mount]
+What=PARTLABEL=EFI-SYSTEM
+Where=/boot
+Options=rw
+
+[Install]
+WantedBy=local-fs.target

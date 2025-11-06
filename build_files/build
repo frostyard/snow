@@ -95,5 +95,8 @@ KERNEL_VERSION="$(basename "$(find /usr/lib/modules -maxdepth 1 -type d | grep -
 dracut --force --no-hostonly --reproducible --zstd --verbose \
 	--kver "$KERNEL_VERSION" "/usr/lib/modules/$KERNEL_VERSION/initramfs.img"
 
+# Enable boot.mount explicitly
+systemctl enable boot.mount
+
 # Cleanup
 apt autoremove -y --purge
