@@ -24,7 +24,6 @@ apt-get install -y \
 	firmware-linux-nonfree
 
 # Ensure dracut is kept
-apt autoremove -y --purge
 apt-get install -y \
 	dracut
 
@@ -106,5 +105,3 @@ KERNEL_VERSION="$(basename "$(find /usr/lib/modules -maxdepth 1 -type d | grep -
 dracut --force --no-hostonly --reproducible --zstd --verbose \
 	--kver "$KERNEL_VERSION" "/usr/lib/modules/$KERNEL_VERSION/initramfs.img"
 
-# Cleanup
-apt autoremove -y --purge
