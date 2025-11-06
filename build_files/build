@@ -50,6 +50,10 @@ apt-get install -y \
 	flatpak \
 	curl
 
+# Brew Tap
+mkdir -p /usr/share
+curl "$(curl https://api.github.com/repos/linuxsnow/homebrew-tap/releases/latest | jq -r --arg arch "$(uname -m)" '.assets[] | select(.name | test(".*-" + $arch + "\\.tar\\.zst$")) | .browser_download_url')" -Lo /usr/share/homebrew.tar.zst
+
 # Docker
 apt-get install -y \
 	docker-ce \
