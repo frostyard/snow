@@ -1,0 +1,3 @@
+[Flatpak Preinstall org.gnome.Contacts]
+Branch=stable
+IsRuntime=false

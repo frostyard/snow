@@ -11,3 +11,4 @@ use-custom-icon=false
 menu-button-terminal='ptyxis'
 menu-button-software-center='/usr/bin/bazaar-helper'
 menu-button-system-monitor='/usr/bin/missioncenter-helper'
+menu-button-extensions-app='com.mattjakeman.ExtensionManager.desktop'

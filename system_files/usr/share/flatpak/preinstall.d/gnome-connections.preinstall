@@ -1,0 +1,3 @@
+[Flatpak Preinstall org.gnome.Connections]
+Branch=stable
+IsRuntime=false
