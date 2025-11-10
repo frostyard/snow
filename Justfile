@@ -1,7 +1,7 @@
 set dotenv-load := true
 
 image_name := env("BUILD_IMAGE_NAME", "snow")
-image_repo := env("BUILD_IMAGE_REPO", "ghcr.io/linuxsnow")
+image_repo := env("BUILD_IMAGE_REPO", "ghcr.io/frostyard")
 image_tag := env("BUILD_IMAGE_TAG", "latest")
 base_dir := env("BUILD_BASE_DIR", ".")
 filesystem := env("BUILD_FILESYSTEM", "ext4")
