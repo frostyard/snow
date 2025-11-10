@@ -47,6 +47,21 @@ generate-bootable-image $base_dir=base_dir $filesystem=filesystem:
             --wipe \
             --bootloader systemd
 
+bootable-image-from-ghcr $base_dir=base_dir $filesystem=filesystem:
+    #!/usr/bin/env bash
+    image_filename={{ image_name }}.img
+    if [ ! -e "{{ base_dir }}/${image_filename}" ] ; then
+        fallocate -l 20G "{{ base_dir }}/${image_filename}"
+    fi
+    just bootc install to-disk \
+            --composefs-backend \
+            --via-loopback /data/${image_filename} \
+            --filesystem "{{ filesystem }}" \
+            --source-imgref docker://{{ image_repo }}/{{ image_name }}:{{ image_tag }} \
+            --target-imgref {{ image_repo }}/{{ image_name }}:{{ image_tag }} \
+            --wipe \
+            --bootloader systemd
+
 launch-incus:
     #!/usr/bin/env bash
     image_file={{ base_dir }}/{{ image_name }}.img
