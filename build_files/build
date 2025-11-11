@@ -2,7 +2,6 @@
 set -ouex pipefail
 
 # Repository setup
-sed -i 's/main/main contrib non-free non-free-firmware/' /etc/apt/sources.list.d/*
 mkdir -p /etc/apt/keyrings
 curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.gpg
 echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | tee /etc/apt/sources.list.d/docker.list
@@ -18,14 +17,6 @@ EOF
 
 # Initial update
 apt-get update -y
-
-# Add nonfree firmware
-apt-get install -y \
-	firmware-linux-nonfree
-
-# Ensure dracut is kept
-apt-get install -y \
-	dracut
 
 # Oxidize
 apt install -y \
@@ -99,9 +90,3 @@ apt-get remove -y \
 	wpasupplicant
 # Handle new user groups
 echo 'GROUPS=users docker incus-admin' >> /etc/default/useradd
-
-# Build Initramfs
-KERNEL_VERSION="$(basename "$(find /usr/lib/modules -maxdepth 1 -type d | grep -v -E "*.img" | tail -n 1)")"
-dracut --force --no-hostonly --reproducible --zstd --verbose \
-	--kver "$KERNEL_VERSION" "/usr/lib/modules/$KERNEL_VERSION/initramfs.img"
-
