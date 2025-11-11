@@ -90,3 +90,5 @@ apt-get remove -y \
 	wpasupplicant
 # Handle new user groups
 echo 'GROUPS=users docker incus-admin' >> /etc/default/useradd
+
+rm -rf /etc/machine-id
