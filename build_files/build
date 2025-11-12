@@ -86,6 +86,11 @@ apt-get install -y \
 # Switch to IWD
 apt-get install -y \
 	iwd
+
+# add vim, this is annoying
+apt-get install -y \
+	vim
+
 apt-get remove -y \
 	wpasupplicant
 # Handle new user groups
