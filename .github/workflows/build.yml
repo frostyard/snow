@@ -152,3 +152,11 @@ jobs:
          TAGS: ${{ steps.push.outputs.digest }}
          COSIGN_EXPERIMENTAL: false
          COSIGN_PRIVATE_KEY: ${{ secrets.SIGNING_SECRET }}
+
+      - name: Kickoff snowfield
+        if: github.event_name != 'pull_request' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+        uses: peter-evans/repository-dispatch@v4
+        with:
+          token: ${{ secrets.PAT }}
+          repository: frostyard/snowfield
+          event-type: build
