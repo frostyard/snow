@@ -100,7 +100,8 @@ apt-get install -y \
 	netcat-traditional
 
 apt-get install -y \
-		systemd-homed
+		systemd-homed \
+		openssh-server
 
 # Cleanup unwanted packages
 apt-get purge -y \
@@ -116,3 +117,13 @@ rm -rf /etc/machine-id
 
 # Create mountpoint for users that want this feature.
 mkdir -p /nix
+
+apt list --installed > /usr/share/snow/snow.packages.txt
+# Disable systemd-homed firstboot service, let installer create user
+systemctl disable systemd-homed-firstboot.service
+systemctl mask systemd-homed-firstboot.service
+
+# update os-release info
+sed -i 's/^PRETTY_NAME=.*/PRETTY_NAME="Snow Linux"/' /usr/lib/os-release
+sed -i 's/^NAME=.*/NAME="Snow Linux"/' /usr/lib/os-release
+echo "ID_LIKE=debian" >> /usr/lib/os-release

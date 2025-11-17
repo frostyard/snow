@@ -12,5 +12,7 @@ fi
 if ! id -u snow >/dev/null 2>&1; then
 		useradd -m -u 1500 -g snow-first-setup -G sudo,snow-first-setup -s /bin/bash snow
 fi
+passwd --delete snow
+
 
 systemctl daemon-reload
