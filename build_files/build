@@ -33,6 +33,9 @@ apt install -y \
 #	mv -f "/usr/bin/$(basename "$src_file")-link" "/usr/bin/$(basename "$src_file")"
 #done
 
+apt install -y \
+	sudo
+
 # Distrobox
 apt-get install -y \
 	podman \
