@@ -20,10 +20,13 @@ apt-get update -y
 
 # Oxidize
 apt install -y \
-	sudo-rs \
 	rust-coreutils
-mv -f /usr/bin/sudo-rs /usr/bin/sudo
-mv -f /usr/bin/su-rs /usr/bin/su
+
+# current sudo-rs is broken in trixie
+# https://github.com/trifectatechfoundation/sudo-rs?tab=readme-ov-file#debian
+# sudo-rs \
+# mv -f /usr/bin/sudo-rs /usr/bin/sudo
+# mv -f /usr/bin/su-rs /usr/bin/su
 
 #for src_file in /usr/lib/cargo/bin/coreutils/*; do
 #	ln -s "/usr/bin/coreutils" "/usr/bin/$(basename "$src_file")-link"
