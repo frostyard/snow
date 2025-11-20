@@ -98,7 +98,7 @@ apt-get remove -y \
 # Shell Alternatives
 apt-get install -y \
     fish \
-		zsh
+	zsh
 
 # add vim, this is annoying
 apt-get install -y \
@@ -106,14 +106,22 @@ apt-get install -y \
 	netcat-traditional
 
 apt-get install -y \
-		systemd-homed \
-		openssh-server
+	systemd-homed \
+	openssh-server
 
 # Cleanup unwanted packages
 apt-get purge -y \
 	wpasupplicant \
 	gnome-initial-setup \
 	gnome-tour
+
+# Add mokutil for Surface hardware during install
+apt-get install -y \
+	mokutil
+
+# Grab latest surface linux secure boot key, this will be enrolled during install if snowfield is selected.
+mkdir -p /usr/share/linux-surface-secureboot
+curl https://github.com/linux-surface/linux-surface/raw/refs/heads/master/pkg/keys/surface.cer -Lo /usr/share/linux-surface-secureboot/surface.cer
 
 # Handle new user groups
 echo 'GROUPS=users docker incus-admin' >> /etc/default/useradd
