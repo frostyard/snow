@@ -14,7 +14,7 @@ RUN apt-get update -y && apt-get install -y \
     dpkg-dev \
     lintian
 
-RUN git clone https://github.com/frostyard/first-setup.git && \
+RUN git clone https://github.com/frostyard/first-setup.git --depth 1 && \
     cd first-setup && \
     apt-get build-dep -y . && \
     dpkg-buildpackage

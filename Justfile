@@ -46,7 +46,24 @@ generate-bootable-image $base_dir=base_dir $filesystem=filesystem:
             --target-imgref {{ image_repo }}/{{ image_name }}:{{ image_tag }} \
             --wipe \
             --bootloader systemd \
-            --karg "splash"
+            --karg "splash" \
+            --karg "snow-linux.live=1"
+
+generate-install-image $base_dir=base_dir $filesystem=filesystem:
+    #!/usr/bin/env bash
+    image_filename={{ image_name }}.img
+    if [ ! -e "{{ base_dir }}/${image_filename}" ] ; then
+        fallocate -l 8G "{{ base_dir }}/${image_filename}"
+    fi
+    just bootc install to-disk \
+            --composefs-backend \
+            --via-loopback /data/${image_filename} \
+            --filesystem "{{ filesystem }}" \
+            --target-imgref {{ image_repo }}/{{ image_name }}:{{ image_tag }} \
+            --wipe \
+            --bootloader systemd \
+            --karg "splash" \
+            --karg "snow-linux.live=1"
 
 bootable-image-from-ghcr $base_dir=base_dir $filesystem=filesystem:
     #!/usr/bin/env bash
