@@ -20,21 +20,21 @@ apt-get update -y
 
 # Oxidize
 apt install -y \
-	rust-coreutils
+	rust-coreutils \
+	sudo-rs
 
-# current sudo-rs is broken in trixie
+mv -f /usr/bin/sudo-rs /usr/bin/sudo
+mv -f /usr/bin/su-rs /usr/bin/su
+
+# Current sudo-rs package is broken in trixie
 # https://github.com/trifectatechfoundation/sudo-rs?tab=readme-ov-file#debian
-# sudo-rs \
-# mv -f /usr/bin/sudo-rs /usr/bin/sudo
-# mv -f /usr/bin/su-rs /usr/bin/su
+chmod u+s /usr/bin/su
 
+# Replace coreutils with their rust counterpart
 #for src_file in /usr/lib/cargo/bin/coreutils/*; do
 #	ln -s "/usr/bin/coreutils" "/usr/bin/$(basename "$src_file")-link"
 #	mv -f "/usr/bin/$(basename "$src_file")-link" "/usr/bin/$(basename "$src_file")"
 #done
-
-apt install -y \
-	sudo
 
 # Distrobox
 apt-get install -y \
@@ -45,6 +45,9 @@ apt-get install -y \
 apt-get install -y \
 	flatpak \
 	curl
+
+mkdir -p /etc/flatpak/remotes.d
+curl --retry 3 -Lo /etc/flatpak/remotes.d/flathub.flatpakrepo https://dl.flathub.org/repo/flathub.flatpakrepo
 
 # Brew Tap
 mkdir -p /usr/share
@@ -72,9 +75,6 @@ apt-get install -y \
 	incus \
 	incus-ui-canonical
 
-mkdir -p /etc/flatpak/remotes.d
-curl --retry 3 -Lo /etc/flatpak/remotes.d/flathub.flatpakrepo https://dl.flathub.org/repo/flathub.flatpakrepo
-
 # GNOME Customization
 apt-get install -y \
 	gnome-shell-extension-appindicator
@@ -100,7 +100,7 @@ apt-get install -y \
     fish \
 	zsh
 
-# add vim, this is annoying
+# Vim
 apt-get install -y \
 	vim \
 	netcat-traditional
@@ -123,21 +123,19 @@ apt-get install -y \
 mkdir -p /usr/share/linux-surface-secureboot
 curl https://github.com/linux-surface/linux-surface/raw/refs/heads/master/pkg/keys/surface.cer -Lo /usr/share/linux-surface-secureboot/surface.cer
 
-# Handle new user groups
-echo 'GROUPS=users docker incus-admin' >> /etc/default/useradd
-
-# Ensure first boot works
-rm -rf /etc/machine-id
-
 # Create mountpoint for users that want this feature.
 mkdir -p /nix
 
 apt list --installed > /usr/share/snow/snow.packages.txt
+
 # Disable systemd-homed firstboot service, let installer create user
 systemctl disable systemd-homed-firstboot.service
 systemctl mask systemd-homed-firstboot.service
 
-# update os-release info
+# Update os-release info
 sed -i 's/^PRETTY_NAME=.*/PRETTY_NAME="Snow Linux"/' /usr/lib/os-release
 sed -i 's/^NAME=.*/NAME="Snow Linux"/' /usr/lib/os-release
 echo "ID_LIKE=debian" >> /usr/lib/os-release
+
+# Ensure first boot works
+rm -rf /etc/machine-id
