@@ -24,6 +24,7 @@ apt install -y \
 	sudo-rs
 
 mv -f /usr/bin/sudo-rs /usr/bin/sudo
+mv -f /usr/bin/visudo-rs /usr/bin/visudo
 mv -f /usr/bin/su-rs /usr/bin/su
 
 # Current sudo-rs package is broken in trixie
