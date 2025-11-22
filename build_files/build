@@ -120,7 +120,11 @@ apt list --installed > /usr/share/snow/snow.packages.txt
 # Update os-release info
 sed -i 's/^PRETTY_NAME=.*/PRETTY_NAME="Snow Linux"/' /usr/lib/os-release
 sed -i 's/^NAME=.*/NAME="Snow Linux"/' /usr/lib/os-release
+sed -i 's/^ID=.*/ID="snow"/' /usr/lib/os-release
 echo "ID_LIKE=debian" >> /usr/lib/os-release
+
+# Update build information in os-release
+sed -i "s/^BUILD_ID=.*/BUILD_ID=\"$BUILD_ID\"/" /usr/lib/os-release
 
 # Ensure first boot works
 rm -rf /etc/machine-id
