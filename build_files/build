@@ -172,6 +172,10 @@ KERNEL_VERSION="$(basename "$(find /usr/lib/modules -maxdepth 1 -type d | grep -
 dracut --force --no-hostonly --reproducible --zstd --verbose \
   --kver "$KERNEL_VERSION" "/usr/lib/modules/$KERNEL_VERSION/initramfs.img"
 
+# Clean up /boot
+rm -f /boot/* || true
+rm -f /boot/.* || true
+
 # Print final package list
 apt list --installed > /usr/share/snow/snow.packages.txt
 
