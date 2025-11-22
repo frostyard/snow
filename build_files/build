@@ -127,7 +127,7 @@ curl https://github.com/linux-surface/linux-surface/raw/refs/heads/master/pkg/ke
 codename=$( . /etc/os-release && echo "$VERSION_CODENAME" )
 echo "firmware-ipw2x00 firmware-ipw2x00/license/accepted boolean true" | debconf-set-selections
 echo "firmware-ivtv firmware-ivtv/license/accepted boolean true" | debconf-set-selections
-apt-get purge -y \
+dpkg -r \
 	"linux-image-$(dpkg --print-architecture)"
 apt-get install -y -t "${codename}-backports" \
 	"linux-image-$(dpkg --print-architecture)" \
