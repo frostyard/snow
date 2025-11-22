@@ -14,6 +14,14 @@ Suites: $(. /etc/os-release && echo "$VERSION_CODENAME")
 Components: main
 Signed-By: /etc/apt/keyrings/zabbly.asc
 EOF
+tee /etc/apt/sources.list.d/debian-backports.sources > /dev/null <<EOF
+Types: deb deb-src
+URIs: http://deb.debian.org/debian
+Suites: $(. /etc/os-release && echo "$VERSION_CODENAME")-backports
+Components: main non-free-firmware
+Enabled: yes
+Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
+EOF
 
 # Initial update
 apt-get update -y
@@ -114,6 +122,53 @@ apt-get install -y \
 # Grab latest surface linux secure boot key, this will be enrolled during install if snowfield is selected.
 mkdir -p /usr/share/linux-surface-secureboot
 curl https://github.com/linux-surface/linux-surface/raw/refs/heads/master/pkg/keys/surface.cer -Lo /usr/share/linux-surface-secureboot/surface.cer
+
+# Install Backports Kernel and Firmware
+codename=$( . /etc/os-release && echo "$VERSION_CODENAME" )
+echo "firmware-ipw2x00 firmware-ipw2x00/license/accepted boolean true" | debconf-set-selections
+echo "firmware-ivtv firmware-ivtv/license/accepted boolean true" | debconf-set-selections
+apt-get install -y -t "${codename}-backports" \
+	"linux-image-$(dpkg --print-architecture)" \
+	atmel-firmware \
+	bluez-firmware \
+	dahdi-firmware-nonfree \
+	firmware-amd-graphics \
+	firmware-ast \
+	firmware-ath9k-htc \
+	firmware-atheros \
+	firmware-bnx2 \
+	firmware-bnx2x \
+	firmware-brcm80211 \
+	firmware-carl9170 \
+	firmware-cavium \
+	firmware-cirrus \
+	firmware-intel-graphics \
+	firmware-intel-misc \
+	firmware-intel-sound \
+	firmware-ipw2x00 \
+	firmware-ivtv \
+	firmware-iwlwifi \
+	firmware-libertas \
+	firmware-linux-free \
+	firmware-linux-nonfree \
+	firmware-linux \
+	firmware-marvell-prestera \
+	firmware-mediatek \
+	firmware-misc-nonfree \
+	firmware-myricom \
+	firmware-netronome \
+	firmware-netxen \
+	firmware-nvidia-graphics \
+	firmware-qlogic \
+	firmware-realtek \
+	firmware-siano \
+	firmware-sof-signed \
+	firmware-zd1211
+
+# Build Initramfs
+KERNEL_VERSION="$(basename "$(find /usr/lib/modules -maxdepth 1 -type d | grep -v -E "*.img" | tail -n 1)")"
+dracut --force --no-hostonly --reproducible --zstd --verbose \
+  --kver "$KERNEL_VERSION" "/usr/lib/modules/$KERNEL_VERSION/initramfs.img"
 
 # Print final package list
 apt list --installed > /usr/share/snow/snow.packages.txt
