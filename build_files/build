@@ -127,6 +127,8 @@ curl https://github.com/linux-surface/linux-surface/raw/refs/heads/master/pkg/ke
 codename=$( . /etc/os-release && echo "$VERSION_CODENAME" )
 echo "firmware-ipw2x00 firmware-ipw2x00/license/accepted boolean true" | debconf-set-selections
 echo "firmware-ivtv firmware-ivtv/license/accepted boolean true" | debconf-set-selections
+apt-get purge -y \
+	"linux-image-$(dpkg --print-architecture)"
 apt-get install -y -t "${codename}-backports" \
 	"linux-image-$(dpkg --print-architecture)" \
 	atmel-firmware \
@@ -169,6 +171,7 @@ apt-get install -y -t "${codename}-backports" \
 KERNEL_VERSION="$(basename "$(find /usr/lib/modules -maxdepth 1 -type d | grep -v -E "*.img" | tail -n 1)")"
 dracut --force --no-hostonly --reproducible --zstd --verbose \
   --kver "$KERNEL_VERSION" "/usr/lib/modules/$KERNEL_VERSION/initramfs.img"
+cp -f "/boot/vmlinuz-$KERNEL_VERSION" "/usr/lib/modules/$KERNEL_VERSION/vmlinuz"
 
 # Print final package list
 apt list --installed > /usr/share/snow/snow.packages.txt
