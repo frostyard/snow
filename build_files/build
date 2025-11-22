@@ -81,6 +81,7 @@ apt-get remove -y \
 apt-get install -y \
     fish \
 	zsh
+rm -f /usr/share/applications/fish.desktop
 
 # Add Vim
 apt-get install -y \
