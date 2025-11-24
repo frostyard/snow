@@ -168,12 +168,6 @@ apt-get install -y -t "${codename}-backports" \
 	firmware-sof-signed \
 	firmware-zd1211
 
-# Build Initramfs
-KERNEL_VERSION="$(basename "$(find /usr/lib/modules -maxdepth 1 -type d | grep -v -E "*.img" | tail -n 1)")"
-dracut --force --no-hostonly --reproducible --zstd --verbose \
-  --kver "$KERNEL_VERSION" "/usr/lib/modules/$KERNEL_VERSION/initramfs.img"
-cp -f "/boot/vmlinuz-$KERNEL_VERSION" "/usr/lib/modules/$KERNEL_VERSION/vmlinuz"
-
 # Print final package list
 apt list --installed > /usr/share/snow/snow.packages.txt
 
