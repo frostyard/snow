@@ -5,7 +5,6 @@ COPY build_files /
 FROM ghcr.io/frostyard/debian-bootc-gnome:latest AS builder
 
 ARG DEBIAN_FRONTEND=noninteractive
-
 RUN apt-get update -y && apt-get install -y \
     git \
     devscripts \
@@ -14,6 +13,7 @@ RUN apt-get update -y && apt-get install -y \
     dpkg-dev \
     lintian
 
+ARG DEBIAN_FRONTEND=noninteractive
 RUN git clone https://github.com/frostyard/first-setup.git --depth 1 && \
     cd first-setup && \
     apt-get build-dep -y . && \
@@ -23,6 +23,7 @@ RUN git clone https://github.com/frostyard/first-setup.git --depth 1 && \
 FROM ghcr.io/frostyard/debian-bootc-gnome:latest
 
 COPY --from=builder /snow-first-setup_*.deb /tmp/
+ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get install -y /tmp/snow-first-setup_*.deb
 
 COPY system_files /
