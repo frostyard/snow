@@ -42,8 +42,6 @@ jobs:
           # Lowercase the image uri
           echo "IMAGE_REGISTRY=${IMAGE_REGISTRY,,}" >> ${GITHUB_ENV}
           echo "IMAGE_NAME=${IMAGE_NAME,,}" >> ${GITHUB_ENV}
-          # Grab commit hash
-          echo "SHORT_SHA=${GITHUB_SHA::7}" >> ${GITHUB_ENV}
 
       # These stage versions are pinned by https://github.com/renovatebot/renovate
       - name: Checkout
@@ -56,6 +54,11 @@ jobs:
       #  uses: ublue-os/remove-unwanted-software@517622d6452028f266b7ba4cc9a123b5f58a6b53 # v7
       #  with:
       #    remove-codeql: true
+
+      - name: Build hash
+        run: |
+          # Grab commit hash
+          echo "SHORT_SHA=${GITHUB_SHA::7}" >> ${GITHUB_ENV}
 
       - name: Mount BTRFS for podman storage
         id: container-storage-action
