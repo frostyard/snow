@@ -126,6 +126,3 @@ echo "ID_LIKE=debian" >> /usr/lib/os-release
 
 # Update build information in os-release
 sed -i "s/^BUILD_ID=.*/BUILD_ID=\"$BUILD_ID\"/" /usr/lib/os-release
-
-# Ensure first boot works
-rm -rf /etc/machine-id
