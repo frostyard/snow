@@ -17,14 +17,12 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN git clone https://github.com/frostyard/first-setup.git --depth 1 && \
     cd first-setup && \
     apt-get build-dep -y . && \
-    dpkg-buildpackage
+    dpkg-buildpackage && \
+    mkdir -p /out && \
+    mv /snow-first-setup_*.deb /out/
 
 # Base Image
 FROM ghcr.io/frostyard/debian-bootc-gnome:latest
-
-COPY --from=builder /snow-first-setup_*.deb /tmp/
-ARG DEBIAN_FRONTEND=noninteractive
-RUN apt-get install -y /tmp/snow-first-setup_*.deb
 
 COPY system_files /
 
@@ -34,6 +32,8 @@ RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
     --mount=type=cache,dst=/var/cache \
     --mount=type=cache,dst=/var/log \
     --mount=type=tmpfs,dst=/tmp \
+    --mount=type=bind,from=builder,source=/out,target=/pkg \
+    apt-get install -y /pkg/snow-first-setup_*.deb && \
     /ctx/build && \
     /ctx/shared/build-initramfs && \
     /ctx/shared/finalize
