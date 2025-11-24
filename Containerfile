@@ -34,16 +34,7 @@ RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
     --mount=type=cache,dst=/var/log \
     --mount=type=tmpfs,dst=/tmp \
     /ctx/build && \
-    rm -rf \
-        /boot \
-        /home \
-        /root \
-        /srv && \
-    mkdir /boot && \
-    mkdir /root && \
-    mkdir /home && \
-    mkdir /srv && \
-    rm -f /etc/machine-id
+    /ctx/shared/finalize
 
 # DEBUGGING
 # RUN apt update -y && apt install -y whois

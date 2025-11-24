@@ -4,3 +4,6 @@
 [submodule "logomenu@aryan_k"]
 	path = system_files/usr/share/gnome-shell/extensions/logomenu@aryan_k
 	url = https://github.com/frostyard/Logomenu.git
+[submodule "shared-build-scripts"]
+	path = build_files/shared
+	url = https://github.com/frostyard/shared-build-scripts.git
