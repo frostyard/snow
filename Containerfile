@@ -11,7 +11,8 @@ RUN apt-get update -y && apt-get install -y \
     build-essential \
     fakeroot \
     dpkg-dev \
-    lintian
+    lintian \
+    python3-pytz
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN git clone https://github.com/frostyard/first-setup.git --depth 1 && \
@@ -34,6 +35,7 @@ RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
     --mount=type=cache,dst=/var/lib/apt \
     --mount=type=tmpfs,dst=/tmp \
     --mount=type=bind,from=builder,source=/out,target=/pkg \
+    apt-get update && \
     apt-get install -y /pkg/snow-first-setup_*.deb && \
     /ctx/build && \
     /ctx/shared/build-initramfs && \
