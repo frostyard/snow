@@ -1,6 +1,7 @@
 set dotenv-load := true
 
 image_name := env("BUILD_IMAGE_NAME", "snow")
+base_image_name := env("BUILD_BASE_IMAGE_NAME", "debian-bootc-gnome")
 image_repo := env("BUILD_IMAGE_REPO", "ghcr.io/frostyard")
 image_tag := env("BUILD_IMAGE_TAG", "latest")
 base_dir := env("BUILD_BASE_DIR", ".")
@@ -11,6 +12,7 @@ default:
     just --list --unsorted
 
 build-container $image_name=image_name:
+    sudo podman pull "{{ image_repo }}/{{ base_image_name }}:latest" || true
     sudo podman build --no-cache -t "{{ image_name }}:{{ image_tag }}" .
 
 run-container $image_name=image_name:
@@ -53,7 +55,7 @@ generate-install-image $base_dir=base_dir $filesystem=filesystem:
     #!/usr/bin/env bash
     image_filename={{ image_name }}.img
     if [ ! -e "{{ base_dir }}/${image_filename}" ] ; then
-        fallocate -l 9G "{{ base_dir }}/${image_filename}"
+        fallocate -l 10G "{{ base_dir }}/${image_filename}"
     fi
     just bootc install to-disk \
             --composefs-backend \
