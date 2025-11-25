@@ -33,6 +33,7 @@ RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
     --mount=type=cache,dst=/var/cache \
     --mount=type=cache,dst=/var/log \
     --mount=type=cache,dst=/var/lib/apt \
+    --mount=type=cache,dst=/var/lib/dpkg/updates \
     --mount=type=tmpfs,dst=/tmp \
     --mount=type=bind,from=builder,source=/out,target=/pkg \
     apt-get update && \
