@@ -1,1 +1,2 @@
-enable docker.service
+disable docker.service
+disable docker.socket
