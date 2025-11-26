@@ -135,6 +135,9 @@ apt-get install -y -t "${codename}-backports" \
 	atmel-firmware \
 	bluez-firmware \
 	dahdi-firmware-nonfree \
+	mesa-vulkan-drivers \
+	mesa-va-drivers \
+	intel-media-va-driver-non-free \
 	firmware-amd-graphics \
 	firmware-ast \
 	firmware-ath9k-htc \
