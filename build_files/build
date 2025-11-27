@@ -101,6 +101,10 @@ apt-get install -y \
 	systemd-homed \
 	openssh-server
 
+# Add cifs-utils for samba shares
+apt-get install -y \
+	cifs-utils
+
 # Disable systemd-homed firstboot service, let installer create user
 systemctl disable systemd-homed-firstboot.service
 systemctl mask systemd-homed-firstboot.service
@@ -115,7 +119,7 @@ apt-get purge -y \
 apt-get install -y \
 	mokutil
 
-# Add build-essential 
+# Add build-essential
 apt-get install -y \
 	build-essential
 
