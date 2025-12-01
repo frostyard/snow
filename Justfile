@@ -5,7 +5,7 @@ base_image_name := env("BUILD_BASE_IMAGE_NAME", "debian-bootc-gnome")
 image_repo := env("BUILD_IMAGE_REPO", "ghcr.io/frostyard")
 image_tag := env("BUILD_IMAGE_TAG", "latest")
 base_dir := env("BUILD_BASE_DIR", ".")
-filesystem := env("BUILD_FILESYSTEM", "ext4")
+filesystem := env("BUILD_FILESYSTEM", "btrfs")
 selinux := path_exists('/sys/fs/selinux')
 
 default:
@@ -45,6 +45,7 @@ generate-bootable-image $base_dir=base_dir $filesystem=filesystem:
             --composefs-backend \
             --via-loopback /data/${image_filename} \
             --filesystem "{{ filesystem }}" \
+            --block-setup direct \
             --target-imgref {{ image_repo }}/{{ image_name }}:{{ image_tag }} \
             --wipe \
             --bootloader systemd \
@@ -60,6 +61,7 @@ generate-install-image $base_dir=base_dir $filesystem=filesystem:
     just bootc install to-disk \
             --composefs-backend \
             --via-loopback /data/${image_filename} \
+            --block-setup direct \
             --filesystem "{{ filesystem }}" \
             --target-imgref {{ image_repo }}/{{ image_name }}:{{ image_tag }} \
             --wipe \
@@ -76,6 +78,7 @@ bootable-image-from-ghcr $base_dir=base_dir $filesystem=filesystem:
     just bootc install to-disk \
             --composefs-backend \
             --via-loopback /data/${image_filename} \
+            --block-setup direct \
             --filesystem "{{ filesystem }}" \
             --source-imgref docker://{{ image_repo }}/{{ image_name }}:{{ image_tag }} \
             --target-imgref {{ image_repo }}/{{ image_name }}:{{ image_tag }} \
@@ -103,10 +106,25 @@ launch-incus:
     incus config device add "$instance_name" vtpm tpm
     incus config device add "$instance_name" install disk source="$abs_image_file" boot.priority=90
     incus start "$instance_name"
-
-
     echo "$instance_name is Starting..."
+    incus console --type=vga "$instance_name"
 
+remove-install-device:
+    #!/usr/bin/env bash
+    instance_name="{{ image_name }}"
+    echo "Removing install device from instance $instance_name"
+    incus config device remove "$instance_name" install || true
+
+console:
+    #!/usr/bin/env bash
+    instance_name="{{ image_name }}"
+    # start the instance if it is not running
+    state=$(incus info "$instance_name" | grep 'Status:' | awk '{print $2}')
+    if [ "$state" != "Running" ]; then
+        echo "Instance $instance_name is not running. Starting it..."
+        incus start "$instance_name"
+    fi
+    echo "Connecting to console of instance $instance_name"
     incus console --type=vga "$instance_name"
 
 rm-incus:
@@ -114,3 +132,6 @@ rm-incus:
     instance_name="{{ image_name }}"
     echo "Stopping and removing instance $instance_name"
     incus rm --force "$instance_name" || true
+    image_file={{ base_dir }}/{{ image_name }}.img
+    rm -f "$image_file" || true
+
