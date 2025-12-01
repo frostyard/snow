@@ -26,10 +26,6 @@ EOF
 # Initial update
 apt-get update -y
 
-# Add sudo
-apt install -y \
-	sudo
-
 # Distrobox
 apt-get install -y \
 	podman \
@@ -106,10 +102,6 @@ apt-get purge -y \
 	wpasupplicant \
 	gnome-initial-setup \
 	gnome-tour
-
-# Add mokutil for Surface hardware during install
-apt-get install -y \
-	mokutil
 
 # Add build-essential
 apt-get install -y \
