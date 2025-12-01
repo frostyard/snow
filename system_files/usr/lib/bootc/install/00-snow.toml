@@ -1,0 +1,6 @@
+[install]
+block = ["direct", "tpm2-luks"]
+kargs = ["splash"]
+
+[install.filesystem.root]
+type = "btrfs"
