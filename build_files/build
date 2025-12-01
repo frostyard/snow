@@ -94,20 +94,12 @@ rm -f /usr/share/applications/fish.desktop
 # Add Vim
 apt-get install -y \
 	vim \
-	netcat-traditional
-
-# Add Systemd-Homed
-apt-get install -y \
-	systemd-homed \
+	netcat-traditional \
 	openssh-server
 
 # Add cifs-utils for samba shares
 apt-get install -y \
 	cifs-utils
-
-# Disable systemd-homed firstboot service, let installer create user
-systemctl disable systemd-homed-firstboot.service
-systemctl mask systemd-homed-firstboot.service
 
 # Cleanup unwanted packages
 apt-get purge -y \
