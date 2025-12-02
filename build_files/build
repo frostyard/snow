@@ -52,16 +52,9 @@ apt-get install -y \
 
 # Incus
 apt-get install -y \
-	dnsmasq-base \
-	ovmf \
-	qemu-kvm \
-	qemu-utils \
-	qemu-system-gui \
-	qemu-system-modules-spice \
-	ipxe-qemu \
-	genisoimage \
 	virt-viewer \
 	incus \
+	incus-extra \
 	incus-ui-canonical
 
 # GNOME Customization
