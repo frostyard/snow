@@ -2,6 +2,11 @@
 
 set -eux
 
+# if /etc/snow/oem-complete exists, exit immediately
+if [ -f /etc/snow/oem-complete ]; then
+		exit 0
+fi
+
 # create a group called "snow-first-setup" with custom gid 1501
 if ! getent group snow-first-setup >/dev/null; then
 		groupadd -g 1501 snow-first-setup
