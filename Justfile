@@ -31,8 +31,21 @@ bootc *ARGS:
         -v "{{ base_dir }}:/data" \
         "{{ image_name }}:{{ image_tag }}" bootc {{ ARGS }}
 
+
+getfiles:
+    #!/usr/bin/env bash
+    IMG="{{ image_name }}:{{ image_tag }}"
+    mnt=$(sudo podman image mount $IMG)
+    echo "Mounted image $IMG at $mnt"
+    sudo cp -r $mnt/usr/lib/systemd/boot/efi/systemd-bootx64.efi.signed .
+    sudo cp -r $mnt/usr/lib/shim/shimx64.efi.signed .
+    sudo cp -r $mnt/usr/lib/shim/mmx64.efi.signed .
+    sudo cp -r $mnt/usr/lib/shim/fbx64.efi.signed .
+    sudo podman image unmount $IMG
+
 # accelerate bootc image building with /tmp
 setup-bootc-accelerator:
+    #!/usr/bin/env bash
     echo "BUILD_BASE_DIR=/tmp" > .env
 
 generate-bootable-image $base_dir=base_dir $filesystem=filesystem:
@@ -52,7 +65,34 @@ generate-bootable-image $base_dir=base_dir $filesystem=filesystem:
             --karg "splash" \
             --karg "snow-linux.live=1"
 
-generate-install-image $base_dir=base_dir $filesystem=filesystem:
+    # mount the image and apply secure boot fixes
+    # sudo losetup -l
+    loopdev=$(sudo losetup --show -fP "{{ base_dir }}/${image_filename}")
+    MOUNTPOINT=/mnt/install-image-snow
+
+    sudo mkdir -p ${MOUNTPOINT}
+    sudo mount "${loopdev}p2" ${MOUNTPOINT}
+    echo "Install image mounted at ${MOUNTPOINT}"
+
+    echo "Copying signed bootloader files to EFI partition"
+    # copy systemd-bootx64.efi.signed to the mounted efi partition, renaming it to GRUBX64.efi
+    # so it will chain load from shim
+    sudo cp "systemd-bootx64.efi.signed" "$MOUNTPOINT/EFI/BOOT/GRUBX64.efi"
+
+    # copy shimx64.efi.signed to the mounted efi partition, renaming it to BOOTX64.EFI
+    # so it will be the default boot entry
+    sudo cp "shimx64.efi.signed" "$MOUNTPOINT/EFI/BOOT/BOOTX64.EFI"
+
+    # # finally uncomment the line in loader.conf that sets the timeout
+    # # so that the boot menu appears, allowing the user to edit the kargs
+    # # if needed to unlock the disk
+    sudo sed -i 's/^#timeout/timeout/' "$MOUNTPOINT/loader/loader.conf"
+    sudo umount ${MOUNTPOINT}
+    sudo rm -rf ${MOUNTPOINT}
+    sudo losetup -d ${loopdev}
+
+
+generate-install-image $base_dir=base_dir $filesystem=filesystem: getfiles
     #!/usr/bin/env bash
     image_filename={{ image_name }}.img
     if [ ! -e "{{ base_dir }}/${image_filename}" ] ; then
@@ -68,6 +108,32 @@ generate-install-image $base_dir=base_dir $filesystem=filesystem:
             --bootloader systemd \
             --karg "splash" \
             --karg "snow-linux.live=1"
+
+    # mount the image and apply secure boot fixes
+    # sudo losetup -l
+    loopdev=$(sudo losetup --show -fP "{{ base_dir }}/${image_filename}")
+    MOUNTPOINT=/mnt/install-image-snow
+
+    sudo mkdir -p ${MOUNTPOINT}
+    sudo mount "${loopdev}p2" ${MOUNTPOINT}
+    echo "Install image mounted at ${MOUNTPOINT}"
+
+    echo "Copying signed bootloader files to EFI partition"
+    # copy systemd-bootx64.efi.signed to the mounted efi partition, renaming it to GRUBX64.efi
+    # so it will chain load from shim
+    sudo cp "systemd-bootx64.efi.signed" "$MOUNTPOINT/EFI/BOOT/GRUBX64.efi"
+
+    # copy shimx64.efi.signed to the mounted efi partition, renaming it to BOOTX64.EFI
+    # so it will be the default boot entry
+    sudo cp "shimx64.efi.signed" "$MOUNTPOINT/EFI/BOOT/BOOTX64.EFI"
+
+    # # finally uncomment the line in loader.conf that sets the timeout
+    # # so that the boot menu appears, allowing the user to edit the kargs
+    # # if needed to unlock the disk
+    sudo sed -i 's/^#timeout/timeout/' "$MOUNTPOINT/loader/loader.conf"
+    sudo umount ${MOUNTPOINT}
+    sudo rm -rf ${MOUNTPOINT}
+    sudo losetup -d ${loopdev}
 
 bootable-image-from-ghcr $base_dir=base_dir $filesystem=filesystem:
     #!/usr/bin/env bash
@@ -102,7 +168,7 @@ launch-incus:
     incus init "$instance_name" --empty --vm
     incus config device override "$instance_name" root size=50GiB
     incus config set "$instance_name" limits.cpu=4 limits.memory=8GiB
-    incus config set "$instance_name" security.secureboot=false
+    incus config set "$instance_name" security.secureboot=true
     incus config device add "$instance_name" vtpm tpm
     incus config device add "$instance_name" install disk source="$abs_image_file" boot.priority=90
     incus start "$instance_name"
@@ -131,7 +197,8 @@ rm-incus:
     #!/usr/bin/env bash
     instance_name="{{ image_name }}"
     echo "Stopping and removing instance $instance_name"
-    incus rm --force "$instance_name" || true
+    incus rm --force "$instance_name" 2>/dev/null || true
     image_file={{ base_dir }}/{{ image_name }}.img
+    echo "Removing image file $image_file"
     rm -f "$image_file" || true
 
