@@ -176,4 +176,4 @@ sed -i "s/^BUILD_ID=.*/BUILD_ID=\"$BUILD_ID\"/" /usr/lib/os-release
 # so we can symlink /opt/incus to it via tmpfiles.d
 # and avoid issues with /var/opt being mounted on top
 mkdir -p "/usr/share/factory/opt/incus"
-mv /opt/incus /usr/share/factory/opt/incus
+mv /opt/incus /usr/share/factory/opt/
