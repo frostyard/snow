@@ -1,3 +1,5 @@
 .env
 cosign.key
 *.efi.signed
+snow.img
+snow.iso

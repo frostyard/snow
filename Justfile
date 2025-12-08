@@ -154,8 +154,8 @@ bootable-image-from-ghcr $base_dir=base_dir $filesystem=filesystem:
 
 launch-incus:
     #!/usr/bin/env bash
-    image_file={{ base_dir }}/{{ image_name }}.img
-
+    #image_file={{ base_dir }}/{{ image_name }}.img
+    image_file="snow.img"
     if [ ! -f "$image_file" ]; then
         echo "No image file found, generate-bootable-image first"
         exit 1
@@ -170,6 +170,7 @@ launch-incus:
     incus config set "$instance_name" limits.cpu=4 limits.memory=8GiB
     incus config set "$instance_name" security.secureboot=true
     incus config device add "$instance_name" vtpm tpm
+    #incus config device add "$instance_name" install disk source="$abs_image_file" boot.priority=90
     incus config device add "$instance_name" install disk source="$abs_image_file" boot.priority=90
     incus start "$instance_name"
     echo "$instance_name is Starting..."
