@@ -31,6 +31,9 @@ apt-get install -y \
 	podman \
 	distrobox
 
+apt-get install -y \
+	systemd-container
+
 # Flatpak & Flathub
 apt-get install -y \
 	flatpak \
