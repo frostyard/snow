@@ -7,6 +7,8 @@ image_tag := env("BUILD_IMAGE_TAG", "latest")
 base_dir := env("BUILD_BASE_DIR", ".")
 filesystem := env("BUILD_FILESYSTEM", "btrfs")
 selinux := path_exists('/sys/fs/selinux')
+ovmf_code := env("OVMF_CODE", "/opt/incus/share/qemu/OVMF_CODE.4MB.fd")
+ovmf_vars_orig := env("OVMF_VARS_ORIG", "/opt/incus/share/qemu/OVMF_VARS.4MB.ms.fd")
 
 default:
     just --list --unsorted
@@ -63,7 +65,6 @@ generate-bootable-image $base_dir=base_dir $filesystem=filesystem:
             --wipe \
             --bootloader systemd \
             --karg "splash" \
-            --karg "snow-linux.live=1"
 
     # mount the image and apply secure boot fixes
     # sudo losetup -l
@@ -202,3 +203,20 @@ rm-incus:
     echo "Removing image file $image_file"
     rm -f "$image_file" || true
 
+qemu:
+    #!/usr/bin/env bash
+    image_file={{ base_dir }}/{{ image_name }}.img
+    OVMF_VARS="$(basename "{{ ovmf_vars_orig }}")"
+    if [ ! -e "${OVMF_VARS}" ]; then
+        cp "{{ ovmf_vars_orig }}" "${OVMF_VARS}"
+    fi
+    qemu-system-x86_64 \
+        -machine pc-q35-10.0 \
+        -m 8G \
+        -smp 4 \
+        -cpu host \
+        -enable-kvm \
+        -vga virtio \
+        -drive if=pflash,format=raw,unit=0,file="{{ ovmf_code }}",readonly=on \
+        -drive if=pflash,format=raw,unit=1,file="${OVMF_VARS}" \
+        -drive file=$image_file,format=raw,if=virtio
