@@ -2,4 +2,4 @@ disable incus.socket
 disable incus-user.socket
 disable incus-lxcfs.service
 disable incus-startup.service
-disable opt-incus.mount
+enable opt-incus.mount
