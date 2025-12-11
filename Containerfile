@@ -22,6 +22,15 @@ RUN git clone https://github.com/frostyard/first-setup.git --depth 1 && \
     mkdir -p /out && \
     mv /snow-first-setup_*.deb /out/
 
+ARG DEBIAN_FRONTEND=noninteractive
+RUN git clone https://github.com/frostyard/chairlift.git --depth 1 && \
+    cd chairlift && \
+    apt-get build-dep -y . && \
+    dpkg-buildpackage && \
+    mkdir -p /out && \
+    mv /chairlift_*.deb /out/
+
+
 # Base Image
 FROM ghcr.io/frostyard/debian-bootc-gnome:latest
 
@@ -38,6 +47,7 @@ RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
     --mount=type=bind,from=builder,source=/out,target=/pkg \
     apt-get update && \
     apt-get install -y /pkg/snow-first-setup_*.deb && \
+    apt-get install -y /pkg/chairlift_*.deb && \
     /ctx/build && \
     /ctx/shared/build-initramfs && \
     /ctx/shared/finalize
