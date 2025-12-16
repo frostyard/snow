@@ -7,6 +7,9 @@ FROM ghcr.io/frostyard/debian-bootc-gnome:latest
 
 COPY system_files /
 
+# Copy Homebrew files from the brew image
+COPY --from=ghcr.io/frostyard/brew:latest /system_files /
+
 ARG DEBIAN_FRONTEND=noninteractive
 ARG BUILD_ID=${BUILD_ID}
 RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
