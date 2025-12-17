@@ -41,10 +41,6 @@ apt-get install -y \
 mkdir -p /etc/flatpak/remotes.d
 curl --retry 3 -Lo /etc/flatpak/remotes.d/flathub.flatpakrepo https://dl.flathub.org/repo/flathub.flatpakrepo
 
-# Brew Tap
-mkdir -p /usr/share
-curl "$(curl https://api.github.com/repos/frostyard/homebrew-tap/releases/latest | jq -r --arg arch "$(uname -m)" '.assets[] | select(.name | test(".*-" + $arch + "\\.tar\\.zst$")) | .browser_download_url')" -Lo /usr/share/homebrew.tar.zst
-
 # Docker
 apt-get install -y \
 	docker-ce \
