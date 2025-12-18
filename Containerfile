@@ -20,10 +20,12 @@ RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
     --mount=type=tmpfs,dst=/tmp \
     apt-get update && \
     apt-get install -y wget && \
+    wget -O /tmp/phukit.deb https://github.com/bketelsen/phukit/releases/download/v0.3.0/phukit_0.3.0_amd64.deb && \
     wget -O /tmp/snow-first-setup.deb https://github.com/frostyard/first-setup/releases/download/continuous/snow-first-setup.deb && \
     wget -O /tmp/chairlift.deb https://github.com/frostyard/chairlift/releases/download/continuous/chairlift.deb && \
     apt-get install -y /tmp/snow-first-setup.deb && \
     apt-get install -y /tmp/chairlift.deb && \
+    apt-get install -y /tmp/phukit.deb && \
     /ctx/build && \
     /ctx/shared/build-initramfs && \
     /ctx/shared/finalize
