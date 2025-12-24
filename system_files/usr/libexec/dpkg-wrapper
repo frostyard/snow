@@ -1,0 +1,51 @@
+#!/bin/bash
+# Wrapper for dpkg that allows read-only operations on immutable systems
+# but blocks package installation/removal with a helpful message
+
+REAL_DPKG=/usr/bin/dpkg.real
+
+# Read-only options (these query the database without modifying it)
+# Run normally if ANY of these are the primary action
+for arg in "$@"; do
+    case "$arg" in
+        -l|--list|-L|--listfiles|-s|--status|-S|--search|-p|--print-avail|\
+        --get-selections|--print-architecture|--print-foreign-architectures|\
+        --compare-versions|--help|--version|-\?|--license|--audit|-C|\
+        --yet-to-unpack|--predep-package|--admindir=*|--instdir=*|--root=*)
+            exec "$REAL_DPKG" "$@"
+            ;;
+    esac
+done
+
+# Check for query options that might appear anywhere
+has_query_option=false
+for arg in "$@"; do
+    case "$arg" in
+        -l|--list|-L|--listfiles|-s|--status|-S|--search|-p|--print-avail)
+            has_query_option=true
+            break
+            ;;
+    esac
+done
+
+if $has_query_option; then
+    exec "$REAL_DPKG" "$@"
+fi
+
+# For any other command, check if we're on an immutable system
+if [[ -f /run/ostree-booted ]] || [[ -f /run/nbc-booted ]] || [[ -d /sysroot/ostree ]]; then
+    echo "Error: This is an immutable system (bootc/ostree/nbc)." >&2
+    echo "" >&2
+    echo "Direct package manipulation is not supported at runtime." >&2
+    echo "To modify the system, rebuild the container image." >&2
+    echo "" >&2
+    echo "Read-only dpkg commands still work:" >&2
+    echo "  dpkg -l           # List installed packages" >&2
+    echo "  dpkg -L <pkg>     # List files in a package" >&2
+    echo "  dpkg -s <pkg>     # Show package status" >&2
+    echo "  dpkg -S <file>    # Find which package owns a file" >&2
+    exit 1
+fi
+
+# If not immutable (e.g., in a container build), run normally
+exec "$REAL_DPKG" "$@"

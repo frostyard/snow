@@ -1,6 +1,9 @@
 #!/bin/bash
 set -ouex pipefail
 
+
+
+
 # Repository setup
 mkdir -p /etc/apt/keyrings
 curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.gpg
@@ -176,3 +179,20 @@ sed -i "s/^BUILD_ID=.*/BUILD_ID=\"$BUILD_ID\"/" /usr/lib/os-release
 # and avoid issues with /var/opt being mounted on top
 mkdir -p "/usr/share/factory/opt/incus"
 mv /opt/incus /usr/share/factory/opt/
+
+# probably belong in build_files/shared/finalize, but
+# Make wrapper scripts executable
+chmod +x /usr/libexec/apt-wrapper /usr/libexec/dpkg-wrapper 2>/dev/null || true
+
+
+
+# Set up apt/dpkg wrappers for read-only operation
+# Move real binaries and replace with wrappers
+if [ -f /usr/libexec/apt-wrapper ] && [ ! -f /usr/bin/apt.real ]; then
+  mv /usr/bin/apt /usr/bin/apt.real
+  ln -sf /usr/libexec/apt-wrapper /usr/bin/apt
+fi
+if [ -f /usr/libexec/dpkg-wrapper ] && [ ! -f /usr/bin/dpkg.real ]; then
+  mv /usr/bin/dpkg /usr/bin/dpkg.real
+  ln -sf /usr/libexec/dpkg-wrapper /usr/bin/dpkg
+fi
