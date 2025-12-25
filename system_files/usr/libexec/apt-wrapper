@@ -1,0 +1,63 @@
+#!/bin/bash
+# Wrapper for apt that allows read-only operations on immutable systems
+# but blocks package installation/removal with a helpful message
+
+REAL_APT=/usr/bin/apt.real
+
+# Read-only commands that should always work
+readonly_commands=(
+    "list"
+    "search"
+    "show"
+    "showsrc"
+    "depends"
+    "rdepends"
+    "policy"
+    "madison"
+    "changelog"
+    "source"
+    "download"
+    "moo"
+    "help"
+    "--help"
+    "-h"
+    "--version"
+    "-v"
+)
+
+# Check if the first non-option argument is a read-only command
+for arg in "$@"; do
+    # Skip options
+    [[ "$arg" == -* ]] && continue
+
+    # Check if it's a read-only command
+    for cmd in "${readonly_commands[@]}"; do
+        if [[ "$arg" == "$cmd" ]]; then
+            exec "$REAL_APT" "$@"
+        fi
+    done
+
+    # First non-option arg wasn't a read-only command
+    break
+done
+
+# For any other command, check if we're on an immutable system
+if [[ -f /run/ostree-booted ]] || [[ -f /run/nbc-booted ]] || [[ -d /sysroot/ostree ]]; then
+    echo "Error: This is an immutable system (bootc/ostree/nbc)." >&2
+    echo "" >&2
+    echo "Package installation/removal is not supported at runtime." >&2
+    echo "To modify the system, you need to:" >&2
+    echo "  1. Modify the Containerfile and rebuild the image, or" >&2
+    echo "  2. Use 'bootc switch' to switch to a different image" >&2
+    echo "" >&2
+    echo "For user applications, consider using:" >&2
+    echo "  - Flatpak: flatpak install <app>" >&2
+    echo "  - Homebrew: brew install <package>" >&2
+    echo "  - Distrobox: distrobox create && distrobox enter" >&2
+    echo "" >&2
+    echo "Read-only apt commands still work: apt list, apt search, apt show" >&2
+    exit 1
+fi
+
+# If not immutable (e.g., in a container build), run normally
+exec "$REAL_APT" "$@"
