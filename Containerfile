@@ -20,12 +20,14 @@ RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
     --mount=type=tmpfs,dst=/tmp \
     apt-get update && \
     apt-get install -y wget && \
-    wget -O /tmp/nbc.deb https://github.com/frostyard/nbc/releases/download/v0.12.1/nbc_0.12.1_amd64.deb && \
+    wget -O /tmp/igloo.deb https://github.com/frostyard/igloo/releases/download/dev/igloo_1.0.0.dev_amd64.deb && \
+    wget -O /tmp/nbc.deb https://github.com/frostyard/nbc/releases/download/dev/nbc_1.0.0.dev_amd64.deb && \
     wget -O /tmp/snow-first-setup.deb https://github.com/frostyard/first-setup/releases/download/continuous/snow-first-setup.deb && \
     wget -O /tmp/chairlift.deb https://github.com/frostyard/chairlift/releases/download/continuous/chairlift.deb && \
     apt-get install -y /tmp/snow-first-setup.deb && \
     apt-get install -y /tmp/chairlift.deb && \
     apt-get install -y /tmp/nbc.deb && \
+    apt-get install -y /tmp/igloo.deb && \
     /ctx/build && \
     /ctx/shared/build-initramfs && \
     /ctx/shared/finalize
