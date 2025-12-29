@@ -2,6 +2,7 @@
 Description=NBC Update Download Timer
 
 [Timer]
+Unit=nbc-update-download.service
 OnCalendar=hourly
 Persistent=true
 
