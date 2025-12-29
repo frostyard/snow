@@ -1,0 +1,5 @@
+[Unit]
+Description=NBC Update Download
+
+[Service]
+ExecStart=nbc update --download-only
