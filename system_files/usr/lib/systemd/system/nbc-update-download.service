@@ -1,5 +1,7 @@
 [Unit]
 Description=NBC Update Download
+After=network-online.target
+Wants=network-online.target
 
 [Service]
 Type=oneshot
