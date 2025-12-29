@@ -2,4 +2,4 @@
 Description=NBC Update Download
 
 [Service]
-ExecStart=nbc update --download-only
+ExecStart=/usr/bin/nbc update --download-only
