@@ -176,3 +176,6 @@ sed -i "s/^BUILD_ID=.*/BUILD_ID=\"$BUILD_ID\"/" /usr/lib/os-release
 # and avoid issues with /var/opt being mounted on top
 mkdir -p "/usr/share/factory/opt/incus"
 mv /opt/incus /usr/share/factory/opt/
+
+# write the current date to a file in /etc to indicate when the build was made
+date -u +"%Y-%m-%dT%H:%M:%SZ" > /etc/snow_build_date
