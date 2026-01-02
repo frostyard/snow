@@ -1,0 +1,4 @@
+site_name: images/snow
+
+nav:
+  - Reference: "reference.md"
