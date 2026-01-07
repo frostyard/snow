@@ -26,6 +26,9 @@ EOF
 # Initial update
 apt-get update -y
 
+# Add chairlift
+apt-get install -y \
+	frostyard-chairlift
 # Distrobox
 apt-get install -y \
 	podman \
