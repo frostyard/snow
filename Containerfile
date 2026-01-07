@@ -22,9 +22,7 @@ RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
     apt-get install -y wget && \
     wget -O /tmp/igloo.deb https://github.com/frostyard/igloo/releases/download/dev/igloo_1.0.0.dev_amd64.deb && \
     wget -O /tmp/snow-first-setup.deb https://github.com/frostyard/first-setup/releases/download/continuous/snow-first-setup.deb && \
-    wget -O /tmp/chairlift.deb https://github.com/frostyard/chairlift/releases/download/dev/chairlift_1.0.0.dev_amd64.deb && \
     apt-get install -y /tmp/snow-first-setup.deb && \
-    apt-get install -y /tmp/chairlift.deb && \
     apt-get install -y /tmp/igloo.deb && \
     /ctx/build && \
     /ctx/shared/build-initramfs && \
