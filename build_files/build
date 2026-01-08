@@ -165,7 +165,8 @@ apt-get install -y \
 # Add some keyrings to enable mkosi builds
 apt-get install -y \
 	ubuntu-keyring \
-	debian-archive-keyring
+	debian-archive-keyring \
+	pcscd
 
 # Grab latest surface linux secure boot key, this will be enrolled during install if snowfield is selected.
 mkdir -p /usr/share/linux-surface-secureboot
