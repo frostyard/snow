@@ -130,7 +130,7 @@ apt-get purge -y \
 	gnome-tour
 
 # Remove unwanted bits of GNOME Core
-apt purge -y \
+apt-get purge -y \
 	gnome-session-xsession \
 	baobab \
 	evince \
