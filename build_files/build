@@ -23,8 +23,31 @@ Enabled: yes
 Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
 EOF
 
+# Repository setup
+sed -i 's/main/main contrib non-free non-free-firmware/' /etc/apt/sources.list.d/debian*.sources
+
 # Initial update
 apt-get update -y
+
+# gnome desktop and basic utilities
+# Install Plymouth for boot splash
+apt-get install -y \
+	plymouth \
+	plymouth-themes \
+	plymouth-label
+
+# Install GNOME Desktop
+apt-get install -y \
+	gnome-core \
+	tuned \
+	tuned-ppd \
+	switcheroo-control \
+	ptyxis \
+	pipewire \
+	dbus-broker \
+	mesa-va-drivers \
+	intel-media-va-driver-non-free
+
 
 # Add chairlift
 apt-get install -y \
@@ -105,6 +128,35 @@ apt-get purge -y \
 	wpasupplicant \
 	gnome-initial-setup \
 	gnome-tour
+
+# Remove unwanted bits of GNOME Core
+apt purge -y \
+	gnome-session-xsession \
+	baobab \
+	evince \
+	evolution \
+	firefox-esr \
+	gnome-calculator \
+	gnome-calendar \
+	gnome-characters \
+	gnome-clocks \
+	gnome-connections \
+	gnome-contacts \
+	gnome-font-viewer \
+	gnome-logs \
+	gnome-maps \
+	gnome-shell-extension-manager \
+	gnome-snapshot \
+	gnome-software \
+	gnome-system-monitor \
+	gnome-text-editor \
+	gnome-weather \
+	nm-connection-editor \
+	simple-scan \
+	loupe \
+	papers \
+	totem \
+	yelp
 
 # Add build-essential
 apt-get install -y \
