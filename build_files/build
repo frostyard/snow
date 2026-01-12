@@ -240,3 +240,5 @@ mv /opt/incus /usr/share/factory/opt/
 
 # write the current date to a file in /etc to indicate when the build was made
 date -u +"%Y-%m-%dT%H:%M:%SZ" > /etc/snow_build_date
+
+systemctl enable gdm.service

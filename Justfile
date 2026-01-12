@@ -1,7 +1,7 @@
 set dotenv-load := true
 
 image_name := env("BUILD_IMAGE_NAME", "snow")
-base_image_name := env("BUILD_BASE_IMAGE_NAME", "debian-bootc-gnome")
+base_image_name := env("BUILD_BASE_IMAGE_NAME", "debian-bootc-core")
 image_repo := env("BUILD_IMAGE_REPO", "ghcr.io/frostyard")
 image_tag := env("BUILD_IMAGE_TAG", "latest")
 base_dir := env("BUILD_BASE_DIR", ".")
@@ -155,12 +155,13 @@ bootable-image-from-ghcr $base_dir=base_dir $filesystem=filesystem:
 
 launch-incus:
     #!/usr/bin/env bash
-    image_file={{ base_dir }}/{{ image_name }}.img
+    ## commented out because nbc creates the image below
+    # image_file={{ base_dir }}/{{ image_name }}.img
 
-    if [ ! -f "$image_file" ]; then
-        echo "No image file found, generate-bootable-image first"
-        exit 1
-    fi
+    # if [ ! -f "$image_file" ]; then
+    #     echo "No image file found, generate-bootable-image first"
+    #     exit 1
+    # fi
 
     abs_image_file=$(realpath "$image_file")
 
@@ -220,3 +221,8 @@ qemu:
         -drive if=pflash,format=raw,unit=0,file="{{ ovmf_code }}",readonly=on \
         -drive if=pflash,format=raw,unit=1,file="${OVMF_VARS}" \
         -drive file=$image_file,format=raw,if=virtio
+
+nbc-image:
+    #!/usr/bin/env bash
+    sudo rm -f /tmp/snow.img
+    sudo nbc install --via-loopback /tmp/snow.img --image localhost/snow:latest --skip-pull
